@@ -1,0 +1,85 @@
+$date
+	Wed Aug 14 15:42:38 2019
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module REG_test $end
+$var wire 16 ! reg_out [15:0] $end
+$var reg 1 " READ_EN $end
+$var reg 1 # WRITE_EN $end
+$var reg 1 $ clk $end
+$var reg 16 % reg_addr [15:0] $end
+$var reg 16 & reg_in [15:0] $end
+$scope module reg_file $end
+$var wire 1 " READ_EN $end
+$var wire 1 # WRITE_EN $end
+$var wire 16 ' addr [15:0] $end
+$var wire 1 $ clk $end
+$var wire 16 ( in [15:0] $end
+$var reg 16 ) out [15:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+bx )
+b10111 (
+b0 '
+b10111 &
+b0 %
+0$
+1#
+0"
+bx !
+$end
+#40000
+1$
+#80000
+b11000 &
+b11000 (
+b1 %
+b1 '
+0$
+#120000
+1$
+#160000
+b11001 &
+b11001 (
+b10 %
+b10 '
+0$
+#200000
+1$
+#240000
+b0 %
+b0 '
+0#
+1"
+0$
+#280000
+b10111 !
+b10111 )
+1$
+#320000
+b1 %
+b1 '
+0$
+#360000
+b11000 !
+b11000 )
+1$
+#400000
+b10 %
+b10 '
+0$
+#440000
+b11001 !
+b11001 )
+1$
+#480000
+0$
+#3000000

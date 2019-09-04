@@ -1,0 +1,1 @@
+iverilog -o tb.vvp quick_sort_test_asm.v quick_sort_asm.v REG.v counter.v swap.v stack.v MUX.v
