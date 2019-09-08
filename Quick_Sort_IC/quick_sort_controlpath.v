@@ -118,6 +118,7 @@ module quick_sort_controlpath(clk, A, lo, hi,
     always@ (posedge clk) 
     begin
         case (state)
+        ASM 0
             0: begin
                 $display("state0");
                 push_en = 0;
@@ -141,32 +142,39 @@ module quick_sort_controlpath(clk, A, lo, hi,
                 
                 if(stack_pointer > 0 && flag > 1) state = 1;
             end
-
+        ASM 1
             1: begin
                 $display("state1");
                 pop_en = 1;
                 state =2;
             end
-
+        ASM 2
             2: begin
                 $display("state2");
                 counter_reset = 0;
                 //$display("count =  %d", count);
                 if (count > 3 ) state = 3;
             end
-
+        ASM 3
             3: begin
                 //$display("state3");
                 hi_reg_write_en = 1;
                 lo_reg_write_en = 1;
                 pop_en = 0;
-                if (lo_reg_data_out < hi_reg_data_out) state = 4;
+                state = 4;
+                
             end
 
             4: begin
-                $display("state4");
                 hi_reg_write_en = 0;
                 lo_reg_write_en = 0;
+                if (lo_reg_data_out < hi_reg_data_out) state = 5;
+                else state = 0;
+            end
+        ASM 4
+            5: begin
+                $display("state4");
+                
                 mux_swap_sel = 0;
                 READ_EN = 1;
                 reg_addr_write_en = 1;
@@ -175,47 +183,48 @@ module quick_sort_controlpath(clk, A, lo, hi,
                 j_write_en =1;
                 i_sel =1;
                 j_sel =1;
-                state =5; 
+                state =6; 
             end
-
-            5: begin
+        ASM 5
+            6: begin
                 $display("state5");
                 i_write_en =0;
                 j_write_en =0;
                 reg_addr_write_en = 0;
-                pivot = reg_data_out;
-                state = 6;
+                pivot_write_en = 1;
+                state = 7;
             end
-
-            6: begin
+        ASM 6
+            7: begin
                 $display("state6");
+                pivot_write_en = 0;
                 j_write_en = 0;
                 READ_EN = 1;
                 WRITE_EN = 0;
                 reg_addr_write_en =1;
                 adder_in_sel = 1;
                 mux_swap_sel = 0;
-                if(j_data_out<hi_reg_data_out) state = 7;
+                if(j_data_out<hi_reg_data_out) state = 8;
                 else state =12;
             end
-
-            7: begin
+        ASM 7
+            8: begin
                 $display("state7");
                 reg_addr_write_en =0;
                 counter_reset = 1;
                 $display("reg_data_out = %d pivot = %d", reg_data_out, pivot_data_out); 
-                if(reg_data_out < pivot_data_out) state = 8;
-                else  state = 11;
+                if(reg_data_out < pivot_data_out) state = 9;
+                else  state = 13;
             end
-
-            8: begin
+        ASM 8
+            9: begin
                 $display("state8");
                 swap_addr1_write_en =1;
                 adder_in_sel = 0;
-                state = 9;
+                state = 10;
             end
 
-            9: begin
+            10: begin
                 $display("state9");
                 swap_addr1_write_en = 0;
                 swap_addr2_write_en = 1;
@@ -227,37 +236,37 @@ module quick_sort_controlpath(clk, A, lo, hi,
                 //i=i+1;
                 swap_en = 1;
                 mux_swap_sel =1;
-                state = 10;
+                state = 11;
             end
-
-            10: begin
+        ASM 9
+            11: begin
                 $display("state10");
                 swap_addr2_write_en = 0;
                 i_write_en = 0;
                 swap_en = 0;
                 counter_reset = 0;
                 //$display("count =  %d", count);
-                if (count > 3) state = 11;
+                if (count > 3) state = 12;
             end
-            
-            11: begin 
+        ASM 10    
+            12: begin 
                 j_sel =0;
                 j_write_en = 1;
                 add_sub_1_j_sel = 1;
                 //j=j+1;
-                state = 6;
+                state = 7;
             end
-
-            12: begin
+        ASM 11
+            13: begin
                 $display("state12");
                 reg_addr_write_en =0;
                 swap_addr1_write_en = 1;
                 adder_in_sel = 0;
                 //swap_addr1 = A+i;
-                state = 13;
+                state = 14;
             end
 
-            13: begin
+            14: begin
                 $display("state13");
                 swap_addr1_write_en = 0;
                 swap_addr2_write_en = 1;
@@ -266,62 +275,62 @@ module quick_sort_controlpath(clk, A, lo, hi,
                 mux_swap_sel = 1;
                 counter_reset = 1; 
                 //swap_addr2 = A+hi_reg;
-                state =14;
+                state =15;
             end
 
-
-            14: begin
+        ASM 12
+            15: begin
                 $display("state14");
                 swap_addr2_write_en = 0;
                 swap_en = 0;
                 counter_reset = 0;
-                if (count > 3 && i_data_out> 1) state = 15;
-                else if (count >3 && i_data_out+lo_reg_data_out < hi_reg_data_out) state = 17;
+                if (count > 3 && i_data_out> lo_reg_data_out) state = 16;
+                else if (count >3 && i_data_out < hi_reg_data_out) state = 18;
                 else if (count > 3) state = 0;
             end
-
-            15: begin
+        ASM 13
+            16: begin
                 $display("state15");
                 mux_swap_sel = 0;
                 push_en = 1;
                 counter_reset = 1;
                 stack_data_in1_write_en =1;
-                stack_data_in2_write_en =1;hello
+                stack_data_in2_write_en =1;
                 stack_data_in1 = lo_reg;
                 stack_data_in2 = i-1;
-                state = 16;
-            end
-
-            16: begin
-                counter_reset = 1;
                 state = 17;
             end
-
+        ASM 14
             17: begin
+                counter_reset = 1;
+                state = 18;
+            end
+        ASM 15
+            18: begin
                 $display("state17");
                 counter_reset = 0;
                 //push_en = 0;
                 //$display("count = %d", count);
-                if (count > 3 && i_data_out+lo_reg_data_out < hi_reg_data_out) state = 18;
+                if (count > 3 && i_data_out+lo_reg_data_out < hi_reg_data_out) state = 19;
                 else if(count > 3) state =0;
             end
-
-            18: begin
+        ASM 16
+            19: begin
                 $display("state18");
                 push_en = 0;
                 counter_reset = 1;
                 stack_data_in1 = i+1;
                 stack_data_in2 = hi_reg;
-                state = 19;
+                state = 20;
             end
-
-            19: begin
+        ASM 17
+            20: begin
                 push_en = 1;
                 counter_reset = 1;
-                state = 19;
+                state = 21;
             end
-
-            20: begin
+        ASM 18
+            21: begin
                 $display("state20");
                 //push_en = 0;
                 counter_reset = 0;

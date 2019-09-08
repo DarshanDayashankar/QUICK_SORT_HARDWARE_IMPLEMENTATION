@@ -30,7 +30,7 @@ module quick_sort_datapath(clk, A, lo, hi,
     
     wire [WORD_SIZE-1:0] stack_data_in1_data_out, stack_data_in2_data_out, reg_addr_reg_out, reg_data_in_reg_out, swap_addr1_data_out, swap_addr2_data_out;
     wire [WORD_SIZE-1:0] stack_data_in1_data_in, stack_data_in2_data_in, reg_data_in_reg_in;
-    wire [WORD_SIZE-1:0] pivot_data_in, i_data_in, j_data_in;
+    wire [WORD_SIZE-1:0] i_data_in, j_data_in;
 
     register  stack_data_in1(.CLK(clk), .RESET(stack_data_in1_reset), .WRITE_EN(stack_data_in1_write_en), .REG_IN(stack_data_in1_data_in), .REG_OUT(stack_data_in1_data_out)); 
     register  stack_data_in2(.CLK(clk), .RESET(stack_data_in2_reset), .WRITE_EN(stack_data_in2_write_en), .REG_IN(stack_data_in2_data_in), .REG_OUT(stack_data_in2_data_out)); 
@@ -40,7 +40,7 @@ module quick_sort_datapath(clk, A, lo, hi,
     register  swap_addr2(.CLK(clk), .RESET(swap_addr2_reset), .WRITE_EN(swap_addr2_write_en), .REG_IN(adder_out), .REG_OUT(swap_addr2_data_out));
     register lo_reg(.CLK(clk), .RESET(lo_reg_reset), .WRITE_EN(lo_reg_write_en), .REG_IN(stack_data_out2), .REG_OUT(lo_reg_data_out));
     register hi_reg(.CLK(clk), .RESET(hi_reg_reset), .WRITE_EN(hi_reg_write_en), .REG_IN(stack_data_out1), .REG_OUT(hi_reg_data_out));
-    register pivot(.CLK(clk), .RESET(pivot_reset), .WRITE_EN(pivot_write_en), .REG_IN(pivot_data_in), .REG_OUT(pivot_data_out));
+    register pivot(.CLK(clk), .RESET(pivot_reset), .WRITE_EN(pivot_write_en), .REG_IN(reg_data_out), .REG_OUT(pivot_data_out));
     //register temp(.CLK(clk), .RESET(temp_reset), .WRITE_EN(temp_write_en), .REG_IN(temp_data_in), .REG_OUT(temp_data_out));
     register i(.CLK(clk), .RESET(i_reset), .WRITE_EN(i_write_en), .REG_IN(i_data_in), .REG_OUT(i_data_out));
     register j(.CLK(clk), .RESET(j_reset), .WRITE_EN(j_write_en), .REG_IN(j_data_in), .REG_OUT(j_data_out));
